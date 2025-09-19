@@ -5,6 +5,6 @@
   },
   {
     "command": "python3 main.py",
-    "schedule": "0 8 * * *"  // Вечер (21:00 по Бали / UTC+8)
+    "schedule": "0 13 * * *"  // Вечер (21:00 по Бали / UTC+8)
   }
 ]
