@@ -1,10 +1,10 @@
 [
   {
     "command": "python3 main.py",
-    "schedule": "0 1 * * *"  // Утро (09:00 по Бали / UTC+8)
+    "schedule": "0 1 * * *" 
   },
   {
     "command": "python3 main.py",
-    "schedule": "0 13 * * *"  // Вечер (21:00 по Бали / UTC+8)
+    "schedule": "0 13 * * *"  
   }
 ]
