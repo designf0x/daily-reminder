@@ -22,9 +22,15 @@ def get_day_counter():
 
 def get_morning_message():
     days_free = get_day_counter()
+    # Calculate savings: 350,000 IDR and $20 per day
+    idr_saved = days_free * 350000
+    usd_saved = days_free * 20
+    idr_formatted = f"{idr_saved:,}".replace(",", " ")
+    usd_formatted = f"{usd_saved:,}".replace(",", " ")
     return (
         f"💪 Доброе утро!\n"
-        f"Сегодня день свободы номер {days_free} \n\n"
+        f"Сегодня день свободы номер {days_free}\n"
+        f"Сэкономлено денег: {idr_formatted} IDR / ${usd_formatted}\n\n"
         f"Ты выбираешь ясность.\n"
         f"Без дыма и мутных решений.\n\n"
         f"Сделай 12 вдохов по Стрельниковой.\n"
@@ -34,9 +40,15 @@ def get_morning_message():
 
 def get_evening_message():
     days_free = get_day_counter()
+    # Calculate savings: 350,000 IDR and $20 per day
+    idr_saved = days_free * 350000
+    usd_saved = days_free * 20
+    idr_formatted = f"{idr_saved:,}".replace(",", " ")
+    usd_formatted = f"{usd_saved:,}".replace(",", " ")
     return (
         f"🌙 День {days_free} окончен.\n"
-        f"Ты остался верен себе?\n\n"
+        f"Ты остался верен себе?\n"
+        f"Сэкономлено денег: {idr_formatted} IDR / ${usd_formatted}\n\n"
         f"Помни о практике благодарности, делай малые шаги.\n"
         f"Ты выбрал ясность. Будь лучшей версией себя.\n\n"
         f"Завтра продолжим."
