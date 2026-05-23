@@ -2,10 +2,10 @@ name: Daily Telegram Reminder
 
 on:
   schedule:
-    # 1:00 AM UTC (e.g., 4:00 AM MSK / 9:00 AM SGT) - Morning Reminder
-    - cron: '0 1 * * *'
-    # 1:00 PM UTC (e.g., 4:00 PM MSK / 9:00 PM SGT) - Evening Reminder
-    - cron: '0 13 * * *'
+    # 1:05 AM UTC (e.g., 4:05 AM MSK / 9:05 AM SGT/WITA) - Morning Reminder
+    - cron: '5 1 * * *'
+    # 1:05 PM UTC (e.g., 4:05 PM MSK / 9:05 PM SGT/WITA) - Evening Reminder
+    - cron: '5 13 * * *'
   
   # Allow manual runs from the GitHub Actions tab
   workflow_dispatch:
@@ -48,9 +48,9 @@ jobs:
           TYPE="auto"
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             TYPE="${{ github.event.inputs.reminder_type }}"
-          elif [ "${{ github.event.schedule }}" = "0 1 * * *" ]; then
+          elif [ "${{ github.event.schedule }}" = "5 1 * * *" ]; then
             TYPE="morning"
-          elif [ "${{ github.event.schedule }}" = "0 13 * * *" ]; then
+          elif [ "${{ github.event.schedule }}" = "5 13 * * *" ]; then
             TYPE="evening"
           fi
 
