@@ -1,0 +1,10 @@
+[
+  {
+    "command": "python3 main.py",
+    "schedule": "0 1 * * *" 
+  },
+  {
+    "command": "python3 main.py",
+    "schedule": "0 13 * * *"  
+  }
+]
