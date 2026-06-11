@@ -97,19 +97,73 @@ export async function fetchDeepSeekMotivation(daysFree: number, isMorning: boole
 }
 
 /**
+ * Calculates the formatted duration since START_DATE in years, months, and days with Russian plurals.
+ */
+export function getDurationString(now: Date = new Date()): string {
+  const startYear = START_DATE.getUTCFullYear();
+  const startMonth = START_DATE.getUTCMonth();
+  const startDay = START_DATE.getUTCDate();
+
+  const endYear = now.getUTCFullYear();
+  const endMonth = now.getUTCMonth();
+  const endDay = now.getUTCDate();
+
+  let years = endYear - startYear;
+  let months = endMonth - startMonth;
+  let days = endDay - startDay;
+
+  if (days < 0) {
+    const prevMonthDate = new Date(Date.UTC(endYear, endMonth, 0));
+    days += prevMonthDate.getUTCDate();
+    months -= 1;
+  }
+
+  if (months < 0) {
+    months += 12;
+    years -= 1;
+  }
+
+  const getPlural = (num: number, one: string, two: string, five: string): string => {
+    const n = Math.abs(num) % 100;
+    const n1 = n % 10;
+    if (n > 10 && n < 20) return five;
+    if (n1 > 1 && n1 < 5) return two;
+    if (n1 === 1) return one;
+    return five;
+  };
+
+  const parts: string[] = [];
+  if (years > 0) {
+    const yearWord = getPlural(years, "год", "года", "лет");
+    parts.push(`${years} ${yearWord}`);
+  }
+  if (months > 0) {
+    const monthWord = getPlural(months, "месяц", "месяца", "месяцев");
+    parts.push(`${months} ${monthWord}`);
+  }
+  if (days > 0 || parts.length === 0) {
+    const dayWord = getPlural(days, "день", "дня", "дней");
+    parts.push(`${days} ${dayWord}`);
+  }
+
+  return parts.join(" ");
+}
+
+/**
  * Generates the morning reminder message.
  */
-export function getMorningMessage(daysFree: number, advice: string): string {
+export function getMorningMessage(daysFree: number, advice: string, now: Date = new Date()): string {
   const idrSaved = daysFree * 350000;
   const usdSaved = daysFree * 20;
   const idrFormatted = formatNumber(idrSaved);
   const usdFormatted = formatNumber(usdSaved);
+  const duration = getDurationString(now);
 
   const adviceBlock = advice ? `💡 Мудрость дня: ${advice}\n\n` : "";
 
   return (
     `💪 Доброе утро!\n` +
-    `Сегодня день свободы номер ${daysFree}\n` +
+    `Сегодня: ${duration}\n` +
     `Сэкономлено денег: ${idrFormatted} IDR / $${usdFormatted}\n\n` +
     `Ты выбираешь ясность.\n` +
     `Фокус на важном и осознанные решения.\n\n` +
@@ -123,16 +177,17 @@ export function getMorningMessage(daysFree: number, advice: string): string {
 /**
  * Generates the evening reminder message.
  */
-export function getEveningMessage(daysFree: number, advice: string): string {
+export function getEveningMessage(daysFree: number, advice: string, now: Date = new Date()): string {
   const idrSaved = daysFree * 350000;
   const usdSaved = daysFree * 20;
   const idrFormatted = formatNumber(idrSaved);
   const usdFormatted = formatNumber(usdSaved);
+  const duration = getDurationString(now);
 
   const adviceBlock = advice ? `💡 Напутствие на вечер: ${advice}\n\n` : "";
 
   return (
-    `🌙 День ${daysFree} окончен.\n` +
+    `🌙 ${duration} позади.\n` +
     `Ты остался верен себе?\n` +
     `Сэкономлено денег: ${idrFormatted} IDR / $${usdFormatted}\n\n` +
     `Помни о практике благодарности, делай малые шаги.\n` +

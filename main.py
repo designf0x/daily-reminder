@@ -3,7 +3,7 @@ import asyncio
 import os
 import sys
 import argparse
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from telegram import Bot
 
 # === Настройки / Settings ===
@@ -15,21 +15,67 @@ CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 START_DATE = datetime(2025, 6, 13)
 
 # === Сообщения / Messages ===
+def get_duration_string(now_dt=None):
+    if now_dt is None:
+        now_dt = datetime.now(timezone.utc)
+    
+    start_year = START_DATE.year
+    start_month = START_DATE.month
+    start_day = START_DATE.day
+    
+    end_year = now_dt.year
+    end_month = now_dt.month
+    end_day = now_dt.day
+    
+    years = end_year - start_year
+    months = end_month - start_month
+    days = end_day - start_day
+    
+    if days < 0:
+        first_of_current = datetime(end_year, end_month, 1)
+        prev_month_date = first_of_current - timedelta(days=1)
+        days += prev_month_date.day
+        months -= 1
+        
+    if months < 0:
+        months += 12
+        years -= 1
+        
+    def get_plural(num, one, two, five):
+        n = abs(num) % 100
+        n1 = n % 10
+        if 10 < n < 20:
+            return five
+        if 1 < n1 < 5:
+            return two
+        if n1 == 1:
+            return one
+        return five
+
+    parts = []
+    if years > 0:
+        parts.append(f"{years} {get_plural(years, 'год', 'года', 'лет')}")
+    if months > 0:
+        parts.append(f"{months} {get_plural(months, 'месяц', 'месяца', 'месяцев')}")
+    if days > 0 or not parts:
+        parts.append(f"{days} {get_plural(days, 'день', 'дня', 'дней')}")
+        
+    return " ".join(parts)
+
 def get_day_counter():
-    # Use timezone-aware datetime.now(timezone.utc) to avoid Python 3.12+ deprecation warnings
     today = datetime.now(timezone.utc).date()
     return (today - START_DATE.date()).days + 1
 
 def get_morning_message():
     days_free = get_day_counter()
-    # Calculate savings: 350,000 IDR and $20 per day
     idr_saved = days_free * 350000
     usd_saved = days_free * 20
     idr_formatted = f"{idr_saved:,}".replace(",", " ")
     usd_formatted = f"{usd_saved:,}".replace(",", " ")
+    duration = get_duration_string()
     return (
         f"💪 Доброе утро!\n"
-        f"Сегодня день свободы номер {days_free}\n"
+        f"Сегодня: {duration}\n"
         f"Сэкономлено денег: {idr_formatted} IDR / ${usd_formatted}\n\n"
         f"Ты выбираешь ясность.\n"
         f"Фокус на важном и осознанные решения.\n\n"
@@ -40,13 +86,13 @@ def get_morning_message():
 
 def get_evening_message():
     days_free = get_day_counter()
-    # Calculate savings: 350,000 IDR and $20 per day
     idr_saved = days_free * 350000
     usd_saved = days_free * 20
     idr_formatted = f"{idr_saved:,}".replace(",", " ")
     usd_formatted = f"{usd_saved:,}".replace(",", " ")
+    duration = get_duration_string()
     return (
-        f"🌙 День {days_free} окончен.\n"
+        f"🌙 {duration} позади.\n"
         f"Ты остался верен себе?\n"
         f"Сэкономлено денег: {idr_formatted} IDR / ${usd_formatted}\n\n"
         f"Помни о практике благодарности, делай малые шаги.\n"
